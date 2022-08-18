@@ -21,7 +21,7 @@ def get_sub_v(mrf, pos_begin, pos_end):
         small_w = np.empty(shape=(0,0,q,q))            
     return {'v':small_v, 'w': small_w}
 
-def get_mrf_from_processed_msa(msa_file, sequence_file=None, max_gap_v=1, max_gap_w=1, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT):
+def get_mrf_from_processed_msa(msa_file, sequence_file=None, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT):
     if sequence_file!=None:
         msa_array = msa_processing.build_int_msa_array_for_all_sequence_positions(msa_file, sequence_file, alphabet_dict=alphabet_dict)
     else:
@@ -35,7 +35,7 @@ def get_mrf_from_unprocessed_msa(msa_file, output_msa_file, sequence_file=None, 
     return mrf 
 
 
-def get_mrf_from_sequence(sequence_file, database, output_msa=None, max_gap_v=1, max_gap_w=1, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
+def get_mrf_from_sequence(sequence_file, database, output_msa=None, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
     if output_msa!=None:
         processed_msa_file = output_msa
     else:
@@ -47,7 +47,7 @@ def get_mrf_from_sequence(sequence_file, database, output_msa=None, max_gap_v=1,
     return mrf
 
 
-def build_mrf_to_folder(potts_folder, sequence_file, msa_file=None, database=None, max_gap_v=1, max_gap_w=1, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
+def build_mrf_to_folder(potts_folder, sequence_file, msa_file=None, database=None, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
     if not potts_folder.is_dir():
         potts_folder.mkdir()
     iom.copy_file(sequence_file, potts_folder/"sequence.fasta")
