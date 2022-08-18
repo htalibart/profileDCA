@@ -84,8 +84,8 @@ def main(args=sys.argv[1:]):
 
     # gap processing
     gap_processing_args = parser.add_argument_group('gap_processing_args')
-    gap_processing_args.add_argument('--max_gap_w', help="Columns with more than max_gap_w fraction of gaps will not be considered in coupling inference, their wij will be set to 0 and their vi will be computed as if they were fields of an independent model", type=float, default=0.1)
-    gap_processing_args.add_argument('--max_gap_v', help="Columns with more than max_gap_v fraction of gaps will not be in the model", type=float, default=0.1)
+    gap_processing_args.add_argument('--max_gap_w', help="Columns with more than max_gap_w fraction of gaps will not be considered in coupling inference, their wij will be set to 0 and their vi will be computed as if they were fields of an independent model", type=float, default=0.7)
+    gap_processing_args.add_argument('--max_gap_v', help="Columns with more than max_gap_v fraction of gaps will not be in the model", type=float, default=0.5)
 
     # inference arguments
     rmfdca_args = parser.add_argument_group('rmfdca_args')

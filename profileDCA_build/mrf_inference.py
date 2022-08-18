@@ -48,7 +48,7 @@ def compute_couplings(fi, fij, covariance_matrix_norm_threshold, uniform_pc_rate
     return w
 
 
-def msa_array_to_mrf(msa_int_array, max_gap_v=1, max_gap_w=1, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT):
+def msa_array_to_mrf(msa_int_array, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT):
     mrf = {}
 
     L = msa_int_array.shape[1]
