@@ -1,0 +1,2 @@
+ALPHABET = "ARNDCQEGHILKMFPSTWYV-"
+ALPHABET_DICT = {letter: ALPHABET.find(letter) for letter in ALPHABET}
