@@ -11,6 +11,6 @@ setup(
         'profileDCA_align':['ppalign_solver.so'],
     },
     entry_points={
-        'console_scripts':['profileDCA_viz = profileDCA_viz.__main__:main', 'profileDCA_build = profileDCA_build.__main__:main', 'profileDCA_align = profileDCA_align.__main__:main']
+        'console_scripts':['profileDCA_viz = profileDCA_viz.__main__:main', 'profileDCA_build = profileDCA_build.__main__:main', 'profileDCA_align = profileDCA_align.__main__:main', 'fasta2csv = profileDCA_utils.fasta2indices:main']
         },
 )
