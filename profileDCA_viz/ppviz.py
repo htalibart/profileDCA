@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from profileDCA_utils import global_variables, ppfunctions
+from profileDCA_align.compute_scores import *
 
 def end_visual(tight_layout=True, show_figure=True, **kwargs):
     """ factorizing matplotlib options always used """
@@ -105,3 +106,49 @@ def plot_heatmap(matrix, center=0, **kwargs):
     sns.heatmap(matrix, cmap="RdBu", center=center, **kwargs)
     plt.tick_params(labelsize='xx-small')
 
+
+def visualize_v_w_scores_alignment(aligned_mrfs, aln_res_file, show_figure=True, tick_space=3, alphabet=global_variables.ALPHABET, start_at_1=False, **kwargs):
+
+    aligned_pos = iom.get_aligned_positions_from_ppalign_output_file(aln_res_file)
+    label_list = aligned_pos
+
+    len_aln = len(aligned_pos[0])
+
+    fig, ax = plt.subplots(nrows=4, ncols=1, sharex=False, sharey=False, gridspec_kw={'height_ratios':[1,1,1,6]})
+
+    # v alignment : vi(a)*vk(a)
+    len_v = len(aligned_mrfs[0]['v'][0])
+    letter_v_scores = np.zeros((len_aln, len_v))
+    for ind_i in range(len_aln):
+        for a in range(len_v):
+            letter_v_scores[ind_i][a] = aligned_mrfs[0]['v'][aligned_pos[0][ind_i]][a]*aligned_mrfs[1]['v'][aligned_pos[1][ind_i]][a]
+    v = ppfunctions.get_reordered_v(letter_v_scores, alphabet)
+    xticklabels = []
+    sns.heatmap(np.transpose(v), yticklabels=alphabet, xticklabels=xticklabels, cmap="RdBu", ax=ax[0], center=0)
+    ax[0].tick_params(labelsize='xx-small')
+
+
+    # v scores alignment
+    v_scores = get_v_scores_for_alignment(aligned_mrfs, aligned_pos, **kwargs)
+    sns.heatmap([v_scores], xticklabels=[], yticklabels=['v'], cmap="RdBu", center=0, ax=ax[1])
+    #ax[2].tick_params(labelsize='xx-small')
+
+    # w scores contributions
+    w_scores_sums = [sum([get_wij_wkl_score(aligned_mrfs[0]['w'][i][j],aligned_mrfs[1]['w'][k][l]) for j,l in zip(aligned_pos[0], aligned_pos[1])]) for i,k in zip(aligned_pos[0], aligned_pos[1])]
+    sns.heatmap([w_scores_sums], yticklabels=['w'], xticklabels=[], cmap="RdBu", ax=ax[2], center=0)
+    ax[2].tick_params(labelsize='x-small')
+
+
+    # w scores
+    w_scores = get_w_scores_for_alignment(aligned_mrfs, aligned_pos)
+    xticklabels = [(label_list[0][k]+start_at_1,label_list[1][k]+start_at_1) for k in range(len(aligned_pos[0]))]
+    xticklabels = [xi if (i%tick_space==0) else " " for i, xi in enumerate(xticklabels)]
+    yticklabels=xticklabels
+    sns.heatmap(w_scores, xticklabels=xticklabels, yticklabels=yticklabels, cmap="RdBu", center=0, ax=ax[3])
+    ax[3].tick_params(labelsize='x-small')
+
+    plt.tight_layout()
+    plt.subplots_adjust(wspace=0, hspace=0)
+    plt.draw()
+    if show_figure:
+        plt.show()
