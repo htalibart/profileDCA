@@ -2,7 +2,7 @@ import unittest
 import pathlib, tempfile, shutil
 import numpy as np
 
-from profileDCA_build import msa_statistics, mrf_inference, covariance_processing, pseudocounts
+from profileDCA_build import msa_statistics, mrf_inference, covariance_processing, pseudocounts, rescaling
 from profileDCA_build import __main__ as ppbuild_main
 from profileDCA_utils import io_management as iom
 
@@ -127,6 +127,39 @@ class Test_PPbuild(unittest.TestCase):
         #mrf = iom.mrf_from_folder(potts_folder)
         ppviz.visualize_mrf(mrf)
         shutil.rmtree(potts_folder)
+
+
+    def test_rescaling(self):
+        files_dict = {}
+        files_dict['sequence'] = pathlib.Path("/tmp/")/(next(tempfile._get_candidate_names())+'.fasta')
+        sequence = "AEIKHYQFNVVMTCSGCSGAVNKVLTKLEPDVSKIDISLEKQLVDVYTTLPYDFILEKIKKTGKEVRSGKQL"
+        with open(files_dict['sequence'], 'w') as sf:
+            sf.write('> 1CC8\n')
+            sf.write(sequence+"\n")
+        files_dict['msa'] = pathlib.Path("/tmp/")/(next(tempfile._get_candidate_names())+'.fasta')
+        with open(files_dict['msa'], 'w') as sf:
+            sf.write('> 1CC8\n')
+            sf.write('AEIKHYQFNVVMTCSGCSGAVNKVLTKLEPDVSKIDISLEKQLVDVYTTLPYDFILEKIKKTGKEVRSGKQL\n')
+            sf.write('> 1CC8_2\n')
+            sf.write('-EIKHYQFNVVMTCSGCSGAVNKVLTKLEPDVSKIDISLEKQLVDVYTTLPYDFILEKI--TGKEVRSGKQL\n')
+        potts_folder = pathlib.Path(tempfile.mkdtemp())
+        mrf = ppbuild_main.get_mrf_from_processed_msa(files_dict['msa'], max_gap_v=0.4)
+
+        v_rescaled = rescaling.simulate_uniform_pc_on_v(mrf['v'], 0.5)
+        self.assertEqual(v_rescaled.shape,mrf['v'].shape)
+        self.assertTrue(np.any(v_rescaled-mrf['v']))
+        w_rescaled = rescaling.simulate_uniform_pc_on_w(mrf['w'], 0.5)
+        self.assertEqual(w_rescaled.shape,mrf['w'].shape)
+        self.assertTrue(np.any(w_rescaled-mrf['w']))
+        
+
+
+        for key in files_dict:
+            files_dict[key].unlink()
+
+        shutil.rmtree(potts_folder)
+       
+
 
 
 
