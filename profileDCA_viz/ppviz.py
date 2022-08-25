@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from profileDCA_utils import global_variables, ppfunctions
+from profileDCA_utils import io_management as iom
 from profileDCA_align.compute_scores import *
 
 def end_visual(tight_layout=True, show_figure=True, **kwargs):

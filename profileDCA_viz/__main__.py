@@ -15,6 +15,7 @@ def main():
     parser.add_argument('-vn', '--v_norms_only', help="Only plot vi norms", action='store_true', default=False), 
     parser.add_argument('-wn', '--w_norms_only', help="Only plot wij norms", action='store_true', default=False), 
     parser.add_argument('-alph', '--alphabetical', help="Use alphabetical amino acid order", action='store_true', default=False), 
+    parser.add_argument('-aln', '--aln_res_file', help="aln.csv provided by PPalign (if you want to visualize an alignment)", type=pathlib.Path, default=None)
     args = vars(parser.parse_args())
 
     if args["alphabetical"]:
@@ -27,7 +28,9 @@ def main():
 
     potts_models = [iom.mrf_from_folder(pf) for pf in args["potts_folders"]]
 
-    if (args["i_index"] is not None) and (args["j_index"] is not None):
+    if args["aln_res_file"] is not None:
+        visualize_v_w_scores_alignment(potts_models, args["aln_res_file"], show_figure=True, alphabet=alphabet, start_at_1=start_at_1)
+    elif (args["i_index"] is not None) and (args["j_index"] is not None):
         for mrf in potts_models:
             i = args["i_index"]
             j = args["j_index"]
