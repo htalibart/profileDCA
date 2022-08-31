@@ -48,7 +48,7 @@ def compute_couplings(fi, fij, covariance_matrix_norm_threshold, uniform_pc_rate
     return w
 
 
-def msa_array_to_mrf(msa_int_array, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT):
+def msa_array_to_mrf(msa_int_array, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, covariance_matrix_norm_threshold=None, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT):
     mrf = {}
 
     L = msa_int_array.shape[1]
@@ -67,7 +67,8 @@ def msa_array_to_mrf(msa_int_array, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=
         fi_trimmed = fi_whole_msa[mrf['mrf_pos_to_seq_pos'],:][pos_w_trim,:]
         fij_trimmed = msa_statistics.compute_double_frequencies(msa_trimmed_for_w, alphabet_dict=alphabet_dict)
         if apply_covariance_matrix_threshold:
-            covariance_matrix_norm_threshold = covariance_processing.get_norm_covariance_matrix_threshold(N)
+            if covariance_matrix_norm_threshold==None:
+                covariance_matrix_norm_threshold = covariance_processing.get_norm_covariance_matrix_threshold(N)
         else:
             covariance_matrix_norm_threshold = 0
         w_trim = compute_couplings(fi_trimmed, fij_trimmed, covariance_matrix_norm_threshold, uniform_pc_rate, shrinkage_coeff, reg_lambda_w)

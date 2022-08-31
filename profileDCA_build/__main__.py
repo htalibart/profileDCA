@@ -21,33 +21,33 @@ def get_sub_v(mrf, pos_begin, pos_end):
         small_w = np.empty(shape=(0,0,q,q))            
     return {'v':small_v, 'w': small_w}
 
-def get_mrf_from_processed_msa(msa_file, sequence_file=None, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT):
+def get_mrf_from_processed_msa(msa_file, sequence_file=None, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, covariance_matrix_norm_threshold=None, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT):
     if sequence_file!=None:
         msa_array = msa_processing.build_int_msa_array_for_all_sequence_positions(msa_file, sequence_file, alphabet_dict=alphabet_dict)
     else:
         msa_array = iom.get_int_msa_array(msa_file)
-    mrf = mrf_inference.msa_array_to_mrf(msa_array, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict)
+    mrf = mrf_inference.msa_array_to_mrf(msa_array, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, covariance_matrix_norm_threshold=covariance_matrix_norm_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict)
     return mrf
 
-def get_mrf_from_unprocessed_msa(msa_file, output_msa_file, sequence_file=None, max_gap_v=1, max_gap_w=1, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
+def get_mrf_from_unprocessed_msa(msa_file, output_msa_file, sequence_file=None, max_gap_v=1, max_gap_w=1, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, covariance_matrix_norm_threshold=None, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
     msa_processing.process_msa_for_inference(msa_file, output_msa_file, seq_id_threshold=seq_id_threshold, max_nb_sequences=max_nb_sequences)
-    mrf = get_mrf_from_processed_msa(output_msa_file, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict, sequence_file=sequence_file)
+    mrf = get_mrf_from_processed_msa(output_msa_file, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, covariance_matrix_norm_threshold=covariance_matrix_norm_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict, sequence_file=sequence_file)
     return mrf 
 
 
-def get_mrf_from_sequence(sequence_file, database, output_msa=None, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
+def get_mrf_from_sequence(sequence_file, database, output_msa=None, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, covariance_matrix_norm_threshold=None, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
     if output_msa!=None:
         processed_msa_file = output_msa
     else:
         processed_msa_file = pathlib.Path("/tmp/")/(next(tempfile._get_candidate_names())+'.fasta')
     sequence_to_msa.sequence_to_processed_msa(sequence_file, database, processed_msa_file, seq_id_threshold=seq_id_threshold, max_nb_sequences=max_nb_sequences)
-    mrf = get_mrf_from_processed_msa(processed_msa_file, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict, sequence_file=sequence_file)
+    mrf = get_mrf_from_processed_msa(processed_msa_file, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, covariance_matrix_norm_threshold=covariance_matrix_norm_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict, sequence_file=sequence_file)
     if output_msa==None:
         processed_msa_file.unlink()
     return mrf
 
 
-def build_mrf_to_folder(potts_folder, sequence_file, msa_file=None, database=None, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
+def build_mrf_to_folder(potts_folder, sequence_file, msa_file=None, database=None, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=0.5, apply_covariance_matrix_threshold=True, covariance_matrix_norm_threshold=None, shrinkage_coeff=0.7, reg_lambda_w=1e-4, alphabet_dict=global_variables.ALPHABET_DICT, seq_id_threshold=0.8, max_nb_sequences=None):
     if not potts_folder.is_dir():
         potts_folder.mkdir()
     iom.copy_file(sequence_file, potts_folder/"sequence.fasta")
@@ -56,9 +56,9 @@ def build_mrf_to_folder(potts_folder, sequence_file, msa_file=None, database=Non
             raise Exception("Missing database path for HHblits")
         else:
             msa_file = potts_folder/"msa.fasta"
-            mrf = get_mrf_from_sequence(sequence_file, database, msa_file, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict, seq_id_threshold=seq_id_threshold, max_nb_sequences=max_nb_sequences)
+            mrf = get_mrf_from_sequence(sequence_file, database, msa_file, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, covariance_matrix_norm_threshold=covariance_matrix_norm_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict, seq_id_threshold=seq_id_threshold, max_nb_sequences=max_nb_sequences)
     else:
-        mrf = get_mrf_from_unprocessed_msa(msa_file, potts_folder/"msa.fasta", sequence_file=sequence_file, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict, seq_id_threshold=seq_id_threshold, max_nb_sequences=max_nb_sequences)
+        mrf = get_mrf_from_unprocessed_msa(msa_file, potts_folder/"msa.fasta", sequence_file=sequence_file, max_gap_v=max_gap_v, max_gap_w=max_gap_w, uniform_pc_rate=uniform_pc_rate, apply_covariance_matrix_threshold=apply_covariance_matrix_threshold, covariance_matrix_norm_threshold=covariance_matrix_norm_threshold, shrinkage_coeff=shrinkage_coeff, reg_lambda_w=reg_lambda_w, alphabet_dict=alphabet_dict, seq_id_threshold=seq_id_threshold, max_nb_sequences=max_nb_sequences)
     iom.mrf_to_files(mrf, potts_folder)
     return mrf
 
@@ -92,6 +92,7 @@ def main(args=sys.argv[1:]):
     rmfdca_args.add_argument('--shrinkage_coeff', help="rmfDCA shrinkage coeff (default: 0.6)", type=float, default=0.6)
     rmfdca_args.add_argument('--uniform_pc_rate', help="uniform pseudo-count rate (default: 0.5)", type=float, default=0.5)
     rmfdca_args.add_argument('--reg_lambda_w', help="regularization coefficient for coupling parameter inference (default: 1e-4)", type=float, default=1e-4)
+    rmfdca_args.add_argument('--covariance_matrix_norm_threshold', help="Arbitrary value for covariance matrix norm thresholding", type=float, default=None)
 
     args = vars(parser.parse_args(args))
 
