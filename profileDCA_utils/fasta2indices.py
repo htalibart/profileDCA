@@ -46,6 +46,49 @@ def fasta2csv(alignment_handle, output_handle, seq_pos_to_mrf_pos=None, start_at
         else:
             print(pair, "was not aligned")
 
+def fasta2indices_with_gaps(alignment_handle, start_at_1=False):
+    align = AlignIO.read(alignment_handle, 'fasta')
+    tuple_list=[]
+    assert(len(align) == 2)
+    if start_at_1:
+        pos0, pos1 = 0, 0
+    else:
+        pos0, pos1 = -1, -1
+    for pair in zip(align[0].seq, align[1].seq):
+        if pair[0].upper() in ExtendedIUPACProtein:
+            pos0+=1
+            if pair[1].upper() in ExtendedIUPACProtein:
+                pos1+=1
+                tuple_list.append((pos0,pos1))
+            else:
+                tuple_list.append((pos0,'-'))
+        else:
+            if pair[1].upper() in ExtendedIUPACProtein:
+                pos1+=1
+                tuple_list.append(('-',pos1))
+            else:
+                tuple_list.append(('-','-'))
+    return tuple_list
+
+
+def fasta2csv_with_gaps(alignment_handle, output_handle, seq_pos_to_mrf_pos=None, start_at_1=False):
+    tuple_list = fasta2indices_with_gaps(alignment_handle, start_at_1=start_at_1)
+    csv_writer = csv.writer(output_handle)
+    csv_writer.writerow(['pos_ref','pos_2'])
+    for pair in tuple_list:
+        if seq_pos_to_mrf_pos is not None:
+            pair = []
+            for k in range(2):
+                pos_in_mrf = pair[k]
+                if pos_in_mrf=='-':
+                    pos_in_seq='-'
+                else:
+                    pos_in_seq = seq_pos_to_mrf_pos[k][pos_in_mrf]
+                pair.append(pos_in_seq)
+        if (pair[0] is not None) and (pair[1] is not None):
+            csv_writer.writerow(pair)
+        else:
+            print(pair, "was not aligned")
 
 
 def main(args=sys.argv[1:]):
