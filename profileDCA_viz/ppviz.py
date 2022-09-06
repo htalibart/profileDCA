@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from profileDCA_utils import global_variables, ppfunctions
+from profileDCA_utils import global_variables, ppfunctions, manage_positions
 from profileDCA_utils import io_management as iom
 from profileDCA_align.compute_scores import *
 
@@ -147,6 +147,67 @@ def visualize_v_w_scores_alignment(aligned_mrfs, aln_res_file, show_figure=True,
     yticklabels=xticklabels
     sns.heatmap(w_scores, xticklabels=xticklabels, yticklabels=yticklabels, cmap="RdBu", center=0, ax=ax[3])
     ax[3].tick_params(labelsize='x-small')
+
+    plt.tight_layout()
+    plt.subplots_adjust(wspace=0, hspace=0)
+    plt.draw()
+    if show_figure:
+        plt.show()
+
+
+
+def visualize_v_scores_alignment_with_sequence(aligned_mrfs, aln_seq_with_gaps_file, show_figure=True, tick_space=3, alphabet=global_variables.ALPHABET, start_at_1=False, **kwargs):
+
+    aligned_seq_pos = iom.get_aligned_positions_with_gaps_from_ppalign_output_file(aln_seq_with_gaps_file)
+    seq_pos_to_mrf_pos_lists = [manage_positions.reverse_pos1_to_pos2(mrf['mrf_pos_to_seq_pos'], len(mrf['v_full'])) for mrf in aligned_mrfs]
+    
+    label_list = aligned_seq_pos
+
+    len_seq_aln = len(aligned_seq_pos[0])
+
+    #fig, ax = plt.subplots(nrows=5, ncols=1, sharex=False, sharey=False, gridspec_kw={'height_ratios':[1,1,1,1,6]})
+    fig, ax = plt.subplots(nrows=3,ncols=1, sharex=False, sharey=False, gridspec_kw={'height_ratios':[1,1,1]})
+    
+    # v full alignment : vi(a)*vk(a) when aligned, 10 when gap in A, -10 when gap in B
+    len_v_full = len(aligned_mrfs[0]['v_full'][0])
+    letter_v_scores = np.zeros((len_seq_aln, len_v_full))
+    for ind_i in range(len_seq_aln):
+        for a in range(len_v_full):
+            pos_in_A = aligned_seq_pos[0][ind_i]
+            if pos_in_A!='-':
+                pos_in_B = aligned_seq_pos[1][ind_i]
+                if pos_in_B!='-':
+                    letter_v_scores[ind_i][a] = aligned_mrfs[0]['v_full'][pos_in_A][a]*aligned_mrfs[1]['v_full'][pos_in_B][a]
+                else:
+                    letter_v_scores[ind_i][a] = -1
+            else:
+                letter_v_scores[ind_i][a] = 1
+    v_full = ppfunctions.get_reordered_v(letter_v_scores, alphabet)
+    xticklabels = []
+    sns.heatmap(np.transpose(v_full), yticklabels=alphabet, xticklabels=xticklabels, cmap="BrBG", ax=ax[0], center=0)
+    ax[0].tick_params(labelsize='xx-small')
+    
+    # v alignment : vi(a)*vk(b) when aligned and in MRF, 0 otherwise
+    len_v = len(aligned_mrfs[0]['v'][0])
+    letter_v_scores = np.zeros((len_seq_aln, len_v))
+    v_scores = np.zeros((len_seq_aln))
+    for ind_i in range(len_seq_aln):
+        pos_in_A = aligned_seq_pos[0][ind_i]
+        pos_in_B = aligned_seq_pos[1][ind_i]
+        if (pos_in_A!='-') and (pos_in_B!='-'):
+            pos_in_mrf_A = seq_pos_to_mrf_pos_lists[0][pos_in_A]
+            pos_in_mrf_B = seq_pos_to_mrf_pos_lists[1][pos_in_B]
+            if (pos_in_mrf_A!=None) and (pos_in_mrf_B!=None):
+                for a in range(len_v):
+                    letter_v_scores[ind_i][a] = aligned_mrfs[0]['v'][pos_in_mrf_A][a]*aligned_mrfs[1]['v'][pos_in_mrf_B][a]
+                v_scores[ind_i] = get_vi_vk_score(aligned_mrfs[0]['v'][pos_in_mrf_A], aligned_mrfs[1]['v'][pos_in_mrf_B])
+    v = ppfunctions.get_reordered_v(letter_v_scores, alphabet)
+    xticklabels = []
+    sns.heatmap(np.transpose(v), yticklabels=alphabet, xticklabels=xticklabels, cmap="RdBu", ax=ax[1], center=0)
+    ax[1].tick_params(labelsize='xx-small')
+
+    # v scores alignment
+    sns.heatmap([v_scores], xticklabels=[], yticklabels=['v'], cmap="RdBu", center=0, ax=ax[2])
 
     plt.tight_layout()
     plt.subplots_adjust(wspace=0, hspace=0)
