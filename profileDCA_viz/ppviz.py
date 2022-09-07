@@ -201,6 +201,10 @@ def visualize_v_scores_alignment_with_sequence(aligned_mrfs, aln_seq_with_gaps_f
                 for a in range(len_v):
                     letter_v_scores[ind_i][a] = aligned_mrfs[0]['v'][pos_in_mrf_A][a]*aligned_mrfs[1]['v'][pos_in_mrf_B][a]
                 v_scores[ind_i] = get_vi_vk_score(aligned_mrfs[0]['v'][pos_in_mrf_A], aligned_mrfs[1]['v'][pos_in_mrf_B])
+            else:
+                for a in range(len_v):
+                    letter_v_scores[ind_i][a] = -1
+
     v = ppfunctions.get_reordered_v(letter_v_scores, alphabet)
     xticklabels = []
     sns.heatmap(np.transpose(v), yticklabels=alphabet, xticklabels=xticklabels, cmap="RdBu", ax=ax[1], center=0)
@@ -211,6 +215,20 @@ def visualize_v_scores_alignment_with_sequence(aligned_mrfs, aln_seq_with_gaps_f
 
     plt.tight_layout()
     plt.subplots_adjust(wspace=0, hspace=0)
+    plt.draw()
+    if show_figure:
+        plt.show()
+
+def visualize_v_alignment(aligned_mrfs, aln_res_file, alphabet=global_variables.ALPHABET, start_at_1=True, tick_space=3, show_figure=True, **kwargs):
+    aligned_pos = iom.get_aligned_positions_from_ppalign_output_file(aln_res_file)
+    label_list = aligned_pos
+
+    fig, ax = plt.subplots(nrows=2, ncols=1, sharex=False, sharey=False, gridspec_kw={'height_ratios':[1,1]})
+    for k in range(2):
+        v = ppfunctions.get_reordered_v(aligned_mrfs[k]['v'][aligned_pos[k],:], alphabet)
+        xticklabels = [str(label_list[k][i]+start_at_1) if (i%tick_space==0) else " " for i in range(0,v.shape[0])]
+        sns.heatmap(np.transpose(v), yticklabels=alphabet, xticklabels=xticklabels, cmap="RdBu", ax=ax[k], center=0)
+        ax[k].tick_params(labelsize='xx-small')
     plt.draw()
     if show_figure:
         plt.show()
