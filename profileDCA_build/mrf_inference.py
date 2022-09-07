@@ -54,7 +54,7 @@ def msa_array_to_mrf(msa_int_array, max_gap_v=1, max_gap_w=0.9, uniform_pc_rate=
     L = msa_int_array.shape[1]
 
     fi_whole_msa = msa_statistics.compute_single_frequencies(msa_int_array, alphabet_dict=alphabet_dict)
-    mrf['v_full'] = compute_fields(fi_whole_msa, uniform_pc_rate=0.5)
+    mrf['v_full'] = compute_fields(fi_whole_msa, uniform_pc_rate=uniform_pc_rate)
    
     msa_trimmed_for_v, mrf['mrf_pos_to_seq_pos'] = trim.trim_int_msa_array(msa_int_array, max_gap_v, alphabet_dict['-'])
     mrf['v'] = mrf['v_full'][mrf['mrf_pos_to_seq_pos'],:]
