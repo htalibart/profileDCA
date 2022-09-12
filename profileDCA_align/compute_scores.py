@@ -56,12 +56,18 @@ def get_v_scores_for_alignment(aligned_potts_models, aligned_pos, offset_v=0, **
     return v_scores
 
 
-def get_w_scores_for_alignment(aligned_potts_models, aligned_pos):
+def get_w_scores_for_alignment_given_w(w_list, aligned_pos):
     """ @w_scores[i,j] is the score for the alignment of couplings from the two @aligned_potts_models that are aligned at position i and j in the PPalign alignment given by @aligned_positions_dict """
     L = len(aligned_pos[0])
     w_scores = np.zeros((L,L))
     for ind_i in range(L-1):
         for ind_j in range(ind_i+1,L):
-            w_scores[ind_i,ind_j] = get_wij_wkl_score(aligned_potts_models[0]['w'][aligned_pos[0][ind_i],aligned_pos[0][ind_j]], aligned_potts_models[1]['w'][aligned_pos[1][ind_i],aligned_pos[1][ind_j]])
+            w_scores[ind_i,ind_j] = get_wij_wkl_score(w_list[0][aligned_pos[0][ind_i],aligned_pos[0][ind_j]], w_list[1][aligned_pos[1][ind_i],aligned_pos[1][ind_j]])
             w_scores[ind_j,ind_i]=w_scores[ind_i,ind_j]
     return w_scores
+
+
+def get_w_scores_for_alignment(aligned_potts_models, aligned_pos):
+    return get_w_scores_for_alignment_given_w([mrf['w'] for mrf in aligned_potts_models], aligned_pos)
+
+
