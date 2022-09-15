@@ -22,3 +22,17 @@ def trim_int_msa_array(msa, max_gap_fraction_per_column, gap_symbol):
 
     pos_to_keep = get_positions_without_too_many_gaps(msa, max_gap_fraction_per_column, gap_symbol)
     return msa[:,pos_to_keep], pos_to_keep
+
+
+def insert_null_positions_to_complete_mrf_pos(mrf, sequence_length):
+    new_mrf = {}
+    new_mrf['mrf_pos_to_seq_pos'] = [pos for pos in range(sequence_length)]
+    q = mrf['v'].shape[1]
+    new_mrf['w'] = np.zeros((sequence_length,sequence_length,q,q))
+    new_mrf['w'][np.ix_(list(mrf['mrf_pos_to_seq_pos']), list(mrf['mrf_pos_to_seq_pos']))] = mrf['w']
+    new_mrf['v'] = np.zeros((sequence_length,q))
+    new_mrf['v'][np.ix_(list(mrf['mrf_pos_to_seq_pos']))] = mrf['v']
+    new_mrf['v_full'] = mrf['v']
+    return new_mrf
+
+

@@ -2,7 +2,7 @@ import unittest
 import pathlib, tempfile, shutil
 import numpy as np
 
-from profileDCA_build import msa_statistics, mrf_inference, covariance_processing, pseudocounts, rescaling
+from profileDCA_build import msa_statistics, mrf_inference, covariance_processing, pseudocounts, rescaling, trim
 from profileDCA_build import __main__ as ppbuild_main
 from profileDCA_utils import io_management as iom
 
@@ -160,7 +160,25 @@ class Test_PPbuild(unittest.TestCase):
         shutil.rmtree(potts_folder)
        
 
-
+    def test_insert_positions_at_trimmed(self):
+        L_seq = 5
+        mrf_pos_to_seq_pos = [0,2,3,4]
+        L_mrf = len(mrf_pos_to_seq_pos)
+        q = 21
+        mrf = {
+                'mrf_pos_to_seq_pos' : np.array(mrf_pos_to_seq_pos),
+                'v' : np.ones((L_mrf, q)),
+                'w' : np.ones((L_mrf, L_mrf, q, q)),
+                'v_full' : np.ones((L_seq,q))
+            }
+        new_mrf = trim.insert_null_positions_to_complete_mrf_pos(mrf, L_seq)
+        a = 0
+        self.assertEqual(new_mrf['v'].shape[0], L_seq)
+        self.assertEqual(len(new_mrf['mrf_pos_to_seq_pos']), L_seq)
+        self.assertEqual(new_mrf['v'][0,a], 1)
+        self.assertEqual(new_mrf['w'][0,0,a,a], 1)
+        self.assertEqual(new_mrf['v'][1,a], 0)
+        self.assertEqual(new_mrf['w'][1,2,a,a], 0)
 
 
 if __name__=='__main__':
