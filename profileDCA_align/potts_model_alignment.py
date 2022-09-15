@@ -164,7 +164,7 @@ def align_two_mrfs_with_solver(mrfs, output_folder, n_limit_param=INFINITY, iter
 
 
 
-def align_missing_positions(aligned_sequence_positions, mrfs, pc_tau=0.5, alphabet=global_variables.ALPHABET, **kwargs):
+def align_missing_positions(aligned_sequence_positions, mrfs, pc_tau=0.5, alphabet=global_variables.ALPHABET, no_free_end_gaps=False, **kwargs):
     kwargs['use_w']=False
     previously_aligned = [-1,-1]
     whole_alignment = [[],[]]
@@ -173,7 +173,7 @@ def align_missing_positions(aligned_sequence_positions, mrfs, pc_tau=0.5, alphab
         to_be_aligned = [[previously_aligned[seq_index]+1,just_aligned[seq_index]-1] for seq_index in range(2)]
         sub_profiles = [ppbuild_main.get_sub_v(mrfs[seq_index], *to_be_aligned[seq_index]) for seq_index in range(2)]
         tmp_output_folder = pathlib.Path(tempfile.mkdtemp())
-        if previously_aligned==[-1,-1]:
+        if previously_aligned==[-1,-1] and not(no_free_end_gaps):
             costly_end_gap_left=False
         else:
             costly_end_gap_left=True
@@ -193,7 +193,10 @@ def align_missing_positions(aligned_sequence_positions, mrfs, pc_tau=0.5, alphab
     to_be_aligned = [[previously_aligned[seq_index]+1,len(mrfs[seq_index]['v_full'])-1] for seq_index in range(2)]
     sub_profiles = [ppbuild_main.get_sub_v(mrfs[seq_index], *to_be_aligned[seq_index]) for seq_index in range(2)]
     tmp_output_folder = pathlib.Path(tempfile.mkdtemp())
-    res_subalignment = align_two_mrfs_with_solver(sub_profiles, tmp_output_folder, disp_level=1, costly_end_gap_left=True, costly_end_gap_right=False, **kwargs)
+    if no_free_end_gaps:
+        res_subalignment = align_two_mrfs_with_solver(sub_profiles, tmp_output_folder, disp_level=1, costly_end_gap_left=True, costly_end_gap_right=True, **kwargs)
+    else:
+        res_subalignment = align_two_mrfs_with_solver(sub_profiles, tmp_output_folder, disp_level=1, costly_end_gap_left=True, costly_end_gap_right=False, **kwargs)
     shutil.rmtree(tmp_output_folder)
     for seq_index in range(2):
         sub_aligned_pos = res_subalignment['aligned_positions_with_gaps'][seq_index]
@@ -208,16 +211,16 @@ def align_missing_positions(aligned_sequence_positions, mrfs, pc_tau=0.5, alphab
 
 
 
-def align_two_mrfs_full(mrfs, output_folder, gap_open=8, **kwargs):
+def align_two_mrfs_full(mrfs, output_folder, gap_open=8, no_free_end_gaps=False, **kwargs):
     # total PPalign time starts now
     time_start = time.time()
       
-    insert_opens = [np.array(manage_positions.get_insert_opens_for_mrf_pos_to_seq_pos(gap_open, mrf['mrf_pos_to_seq_pos'])) for mrf in mrfs]
+    insert_opens = [np.array(manage_positions.get_insert_opens_for_mrf_pos_to_seq_pos(gap_open, mrf['mrf_pos_to_seq_pos'], no_free_end_gaps=no_free_end_gaps)) for mrf in mrfs]
     res_dict = align_two_mrfs_with_solver(mrfs, output_folder, insert_opens=insert_opens, **kwargs)
     # if Potts models were successfully aligned
     if len(res_dict['aligned_positions'])>0:
         res_dict['aligned_sequence_positions_confident'] = manage_positions.translate_aligned_positions_without_gaps(res_dict['aligned_positions'], [mrf['mrf_pos_to_seq_pos'] for mrf in mrfs])
-        res_dict['aligned_sequence_positions_with_gaps'] = align_missing_positions(res_dict['aligned_sequence_positions_confident'], mrfs, gap_open=gap_open, **kwargs)
+        res_dict['aligned_sequence_positions_with_gaps'] = align_missing_positions(res_dict['aligned_sequence_positions_confident'], mrfs, gap_open=gap_open, no_free_end_gaps=no_free_end_gaps, **kwargs)
     else:
         res_dict['aligned_sequence_positions_with_gaps'] = []
 

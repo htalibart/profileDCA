@@ -111,9 +111,12 @@ def reverse_pos1_to_pos2(pos1_to_pos2, L2):
         pos2_to_pos1.append(None)
     return pos2_to_pos1
 
-def get_insert_opens_for_mrf_pos_to_seq_pos(gap_open, mrf_pos_to_seq_pos):
+def get_insert_opens_for_mrf_pos_to_seq_pos(gap_open, mrf_pos_to_seq_pos, no_free_end_gaps=False):
     """ returns a list of length self.potts_model.ncol+1 of open insertion penalties where penalty is set to 0 if positions where trimmed after and @gap_open otherwise """
-    insert_opens = [0]
+    if no_free_end_gaps:
+        insert_opens = [gap_open]
+    else:
+        insert_opens = [0]
     previous_seq_pos = 0
     for mrf_pos in range(1,len(mrf_pos_to_seq_pos)):
         seq_pos = mrf_pos_to_seq_pos[mrf_pos]
@@ -125,5 +128,8 @@ def get_insert_opens_for_mrf_pos_to_seq_pos(gap_open, mrf_pos_to_seq_pos):
             else:
                 insert_opens.append(gap_open)
             previous_seq_pos = seq_pos
-    insert_opens.append(0)
+    if no_free_end_gaps:
+        insert_opens = [gap_open]
+    else:
+        insert_opens.append(0)
     return insert_opens
