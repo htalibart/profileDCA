@@ -129,7 +129,7 @@ def get_insert_opens_for_mrf_pos_to_seq_pos(gap_open, mrf_pos_to_seq_pos, no_fre
                 insert_opens.append(gap_open)
             previous_seq_pos = seq_pos
     if no_free_end_gaps:
-        insert_opens = [gap_open]
+        insert_opens.append(gap_open)
     else:
         insert_opens.append(0)
     return insert_opens
