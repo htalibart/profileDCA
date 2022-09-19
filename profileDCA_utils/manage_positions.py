@@ -117,7 +117,7 @@ def get_insert_opens_for_mrf_pos_to_seq_pos(gap_open, mrf_pos_to_seq_pos, no_fre
         insert_opens = [gap_open]
     else:
         insert_opens = [0]
-    previous_seq_pos = 0
+    previous_seq_pos = mrf_pos_to_seq_pos[0]
     for mrf_pos in range(1,len(mrf_pos_to_seq_pos)):
         seq_pos = mrf_pos_to_seq_pos[mrf_pos]
         if (seq_pos==None):

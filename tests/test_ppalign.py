@@ -490,7 +490,7 @@ class Test_PPalign(unittest.TestCase):
         aligned_records = list(SeqIO.parse(str(output_fasta_file), 'fasta'))
         aligned_sequences = [str(rec.seq) for rec in aligned_records]
         print(aligned_sequences)
-        self.assertEqual(aligned_sequences,["aDce","-D-e"])
+        self.assertEqual(aligned_sequences,["aDCe","-DE-"])
         for pf in potts_folders:
             shutil.rmtree(pf)
         shutil.rmtree(output_folder)
