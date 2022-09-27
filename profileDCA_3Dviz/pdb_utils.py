@@ -19,15 +19,15 @@ def fetch_pdb_file(pdb_id, outputfname):
     try:
         url = "https://files.rcsb.org/download/"+pdb_id+".pdb"
         pdbfile = urlopen(url)
-        with open(outputfname+".pdb",'wb') as output:
+        with open(str(outputfname)+".pdb",'wb') as output:
             output.write(pdbfile.read())
-        return outputfname+".pdb"
+        return str(outputfname)+".pdb"
     except Exception as e:
         url = "https://files.rcsb.org/download/"+pdb_id+".cif"
         ciffile = urlopen(url)
-        with open(outputfname+".cif", 'wb') as output:
+        with open(str(outputfname)+".cif", 'wb') as output:
             output.write(ciffile.read())
-        return outputfname+".cif"
+        return str(outputfname)+".cif"
 
 def get_pdb_chain(pdb_file, pdb_id, chain_id):
     pdbfile = str(pdb_file)

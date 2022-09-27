@@ -99,7 +99,7 @@ def show_predicted_contacts_with_pymol(fout, potts_folders, pdb_id=None, chain_i
 
     if (pdb_file is None) and (pdb_id is not None):
         name = potts_folders[0]/pdb_id
-        pdb_file = fetch_pdb_file(pdb_id, name)
+        pdb_file = pdb_utils.fetch_pdb_file(pdb_id, name)
     pdb_chain = pdb_utils.get_pdb_chain(pdb_file, pdb_id, chain_id)
 
     pdb_couplings_dicts = []
