@@ -23,7 +23,8 @@ def compute_double_frequencies(msa, alphabet_dict=ALPHABET_DICT):
     for i in range(L):
         for j in range(i,L):
             for n in range(N):
-                double_counts[i,j,msa[n,i],msa[n,j]]+=1
+                if (msa[n,i] in alphabet_dict) and (msa[n,j] in alphabet_dict):
+                    double_counts[i,j,msa[n,i],msa[n,j]]+=1
             double_counts[j,i] = np.transpose(double_counts[i,j])
     double_f = double_counts/N
     return double_f
