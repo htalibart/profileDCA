@@ -43,7 +43,7 @@ def main(args=sys.argv[1:]):
     parser.add_argument('-nw', '--no_w', help="Don't use w scores (default : False)", action='store_true')
     parser.add_argument('-nv', '--no_v', help="Don't use v scores (default : False)", action='store_true')
     parser.add_argument('--alpha_w', help="coefficient before w score", default=1, type=float)
-    parser.add_argument('--offset_v', help="score offset for v parameters", default=0.87, type=float)
+    parser.add_argument('--offset_v', help="score offset for v parameters", default=1, type=float)
     parser.add_argument('-go', '--gap_open', help="gap open", default=14, type=float)
     parser.add_argument('-ge', '--gap_extend', help="gap extend", default=0, type=float)
     parser.add_argument('--no_free_end_gaps', help="End gaps are not free (default: they are)", action='store_true') # TODO
