@@ -46,7 +46,7 @@ def main(args=sys.argv[1:]):
     parser.add_argument('--offset_v', help="score offset for v parameters", default=1, type=float)
     parser.add_argument('-go', '--gap_open', help="gap open", default=14, type=float)
     parser.add_argument('-ge', '--gap_extend', help="gap extend", default=0, type=float)
-    parser.add_argument('--no_free_end_gaps', help="End gaps are not free (default: they are)", action='store_true') # TODO
+    parser.add_argument('--no_free_end_gaps', help="End gaps are not free (default: they are)", action='store_true')
 
     # solver options
     parser.add_argument('-t', '--t_limit', help="solver : time limit in seconds (default : 36000)", type=float, default=36000)
