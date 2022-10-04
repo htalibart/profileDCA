@@ -3,6 +3,7 @@ import argparse, sys, time, pathlib
 from profileDCA_utils import io_management as iom
 from profileDCA_utils import manage_positions
 from profileDCA_align.potts_model_alignment import *
+from profileDCA_align import compute_scores
 
 def align_objects_and_handle_files(mrfs, output_folder, sequence_files, **kwargs):
     # write readme with all input arguments used
@@ -43,7 +44,7 @@ def main(args=sys.argv[1:]):
     parser.add_argument('-nw', '--no_w', help="Don't use w scores (default : False)", action='store_true')
     parser.add_argument('-nv', '--no_v', help="Don't use v scores (default : False)", action='store_true')
     parser.add_argument('--alpha_w', help="coefficient before w score", default=1, type=float)
-    parser.add_argument('--offset_v', help="score offset for v parameters", default=1, type=float)
+    parser.add_argument('--offset_v', help="score offset for v parameters", default=None, type=float)
     parser.add_argument('-go', '--gap_open', help="gap open", default=14, type=float)
     parser.add_argument('-ge', '--gap_extend', help="gap extend", default=0, type=float)
     parser.add_argument('--no_free_end_gaps', help="End gaps are not free (default: they are)", action='store_true')
@@ -85,12 +86,19 @@ def main(args=sys.argv[1:]):
     # GET MRFS FROM FOLDERS
     mrfs = []
     sequence_files = []
+    potts_folders = []
     for k in range(1,3):
         pf = args["potts_folder_"+str(k)]
+        potts_folders.append(pf)
         if pf is not None:
             mrfs.append(iom.mrf_from_folder(pf))
             sequence_files.append(pf/"sequence.fasta")
-    
+
+
+    # COMPUTE OFFSET IF NOT MANUALLY SET
+    if args["offset_v"]==None:
+        args["offset_v"] = compute_scores.get_offset(potts_folders)
+
     align_objects_and_handle_files(mrfs, output_folder, sequence_files, **args)
 
 

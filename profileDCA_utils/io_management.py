@@ -47,6 +47,10 @@ def write_readme(folder, **kwargs):
     with p.open(mode='w') as f:
         json.dump(kwargs, f, default=str)
 
+def get_parameters_from_readme_file(readme_file):
+    params = json.load(open(str(readme_file)))
+    return params
+
 def dict_to_csv(d, input_csv_file):
     with open(str(input_csv_file), 'w') as csv_file:
         csv_writer = csv.writer(csv_file)

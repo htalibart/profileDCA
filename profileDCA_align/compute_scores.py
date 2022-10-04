@@ -1,4 +1,7 @@
 import numpy as np
+from profileDCA_build import pseudocounts, mrf_inference
+from profileDCA_utils import global_variables
+from profileDCA_utils import io_management as iom
 
 def get_vi_vk_score(vi, vk, offset_v=0):
     """ returns the similarity score of field vectors @vi and @vk """
@@ -71,3 +74,24 @@ def get_w_scores_for_alignment(aligned_potts_models, aligned_pos):
     return get_w_scores_for_alignment_given_w([mrf['w'] for mrf in aligned_potts_models], aligned_pos)
 
 
+def get_offset_for_uniform_pc_rate(uniform_pc_rate):
+    bg_fi = np.array(global_variables.AA_BACKGROUND_FREQUENCIES).reshape((1,20))
+    bg_fi_pc = pseudocounts.apply_uniform_pseudocounts_to_single_frequencies(bg_fi, uniform_pc_rate)
+    bg_vi_pc = mrf_inference.single_frequencies_to_fields(bg_fi_pc)[0]
+    return get_vi_vk_score(bg_vi_pc, bg_vi_pc, offset_v=0) 
+
+
+def get_offset(potts_folders):
+    """ computes offset from README files in Potts folders. Raises Exception if no README or if uniform_pc_rate is not the same """
+    uniform_pcs = []
+    for pf in potts_folders:
+        readme_file = pf/"README.txt"
+        if not readme_file.is_file():
+            raise Exception("No README.txt in "+str(pf)+". Offset should be set manually with offset_v option")
+        inference_params = iom.get_parameters_from_readme_file(readme_file)
+        uniform_pcs.append(float(inference_params['uniform_pc_rate']))
+    if not uniform_pcs[0]==uniform_pcs[1]:
+        raise Exception("Potts models were trained with a different uniform pseudo-count rate... If you still want to align them, offset_v should be set manually")
+    else:
+        uniform_pc_rate = uniform_pcs[0]
+    return get_offset_for_uniform_pc_rate(uniform_pc_rate)

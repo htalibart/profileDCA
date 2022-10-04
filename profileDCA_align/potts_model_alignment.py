@@ -20,7 +20,6 @@ def get_edges_map(w): #TODO w percent
     return edges_map
 
 def align_two_mrfs_with_solver(mrfs, output_folder, n_limit_param=INFINITY, iter_limit_param=1000, t_limit=36000, disp_level=1, epsilon_sim=0.001, use_w=True, use_v=True, gamma=1.0, theta=0.9, stepsize_min=0.000000005, nb_non_increasing_steps_max=500, alpha_w=1, sim_min=-100, offset_v=0, gap_open=8, gap_extend=0, insert_opens=None, insert_extends=None, costly_end_gap_left=False, costly_end_gap_right=False, remove_negative_couplings=False, **kwargs):
-
     mrf_lengths = [mrf['v'].shape[0] for mrf in mrfs]
     if not all([mrf_length>0 for mrf_length in mrf_lengths]):
         if not any(mrf_lengths):
