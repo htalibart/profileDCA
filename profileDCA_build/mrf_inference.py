@@ -20,11 +20,11 @@ def J_to_w(J):
     L = J.shape[0]//19
     w = np.zeros((L,L,20,20))
     w[:,:,:19,:19] = np.transpose(J.reshape((L,19,L,19)),axes=(0,2,1,3))
-    for i in range(L):
-        for j in range(L):
+    for i in range(L-1):
+        for j in range(i+1,L):
             w[i,j,19,:19] = -np.sum(w[i,j,:19,:19], axis=0)
-            w[i,j,:19,19] = -np.sum(w[i,j,:19,:19], axis=1)
-            w[i,j,19,19] = np.sum(w[i,j,:19,:19])
+            w[i,j,:,19] = -np.sum(w[i,j,:,:19], axis=1)
+            w[j,i] = np.transpose(w[i,j])
     w[range(L),range(L),:,:]=0
     return w
 
