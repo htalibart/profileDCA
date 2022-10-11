@@ -24,7 +24,11 @@ def mrf_to_files(mrf, output_folder):
 def mrf_from_folder(potts_folder):
     mrf = {}
     for key in ['v','w','v_full', 'mrf_pos_to_seq_pos']:
-        mrf[key] = np.load(str(potts_folder/(key+'.npy')))
+        npy_file = potts_folder/(key+'.npy')
+        if npy_file.is_file():
+            mrf[key] = np.load(str(npy_file))
+        else:
+            print("Warning:", str(npy_file), " not found")
     return mrf
 
 def get_first_sequence_in_fasta_file(seq_file):
