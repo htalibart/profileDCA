@@ -7,7 +7,7 @@ def get_letter_index(letter, alphabet_dict):
     if letter in alphabet_dict:
         return alphabet_dict[letter]
     else:
-        raise Exception("letter not in alphabet")
+        raise Exception("letter "+str(letter)+" not in alphabet")
 
 def compute_w_norms(w):
     L = w.shape[0]
