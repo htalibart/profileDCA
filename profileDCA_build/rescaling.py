@@ -3,6 +3,7 @@ import numpy as np
 
 
 def simulate_uniform_pc_on_v(v, v_rescaling_tau=0.5, **kwargs):
+    """ rescale field parameters in @v array by simulating uniform pseudo-counts with rate @v_rescaling_tau """
     q = v.shape[1]
     resc_v = np.zeros_like(v)
     for i in range(len(v)):
@@ -26,6 +27,7 @@ def simulate_uniform_pc_on_v(v, v_rescaling_tau=0.5, **kwargs):
 
 
 def simulate_uniform_pc_on_wij(w, rescaling_tau=0.5, beta=10, **kwargs):
+    """ rescale one single coupling matrix wij in @w array by simulating uniform pseudo-counts with rate @rescaling_tau and softmax base @beta"""
     w_flat = w.flatten()
     S = sum([exp(beta*elt) for elt in w_flat])
     
@@ -47,6 +49,7 @@ def simulate_uniform_pc_on_wij(w, rescaling_tau=0.5, beta=10, **kwargs):
 
 
 def simulate_uniform_pc_on_w(w, w_rescaling_tau=0.5, beta_softmax_w=10, **kwargs):
+    """ rescale coupling parameters in the @w array by simulating uniform pseudo-counts with rate @w_rescaling_tau and softmax base @beta_softmax_w"""
     resc_w = np.zeros_like(w)
     for i in range(len(resc_w)-1):
         for j in range(i+1,len(resc_w)):

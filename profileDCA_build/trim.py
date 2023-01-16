@@ -25,6 +25,7 @@ def trim_int_msa_array(msa, max_gap_fraction_per_column, gap_symbol):
 
 
 def insert_null_positions_to_complete_mrf_pos(mrf, sequence_length):
+    """ outputs a MRF with zero fields and zero couplings at missing positions """
     new_mrf = {}
     new_mrf['mrf_pos_to_seq_pos'] = [pos for pos in range(sequence_length)]
     q = mrf['v'].shape[1]

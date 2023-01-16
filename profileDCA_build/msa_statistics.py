@@ -3,7 +3,7 @@ from profileDCA_utils.global_variables import ALPHABET, ALPHABET_DICT
 
 
 def compute_single_frequencies(msa, alphabet_dict=ALPHABET_DICT):
-    """ input: MSA (np int array object)
+    """ input: MSA (np int array object) @msa, dictionary @alphabet_dict where alphabet_dict[a] is the index of letter a
         output: single frequencies in (L,q) np array """
     N,L = msa.shape
     q = len(alphabet_dict)
@@ -17,6 +17,8 @@ def compute_single_frequencies(msa, alphabet_dict=ALPHABET_DICT):
                 
 
 def compute_double_frequencies(msa, alphabet_dict=ALPHABET_DICT):
+    """ input: MSA (np int array object) @msa, dictionary @alphabet_dict where alphabet_dict[a] is the index of letter a
+        output: double frequencies in (L,L,q,q) np array """
     N,L = msa.shape
     q = len(alphabet_dict)
     double_counts = np.zeros((L,L,q,q))
@@ -31,8 +33,13 @@ def compute_double_frequencies(msa, alphabet_dict=ALPHABET_DICT):
 
 
 def fi_with_gaps_to_fi_without_gaps(fi):
+    """ inputs frequency array @fi of shape Lx20
+        outputs frequency array of shape Lx19 where frequencies are computed without gap symbol
+    """
     fiq = np.tile(fi[:,20],(20,1)).T
     return 1/(1-fiq)*fi[:,:20]
 
 def compute_frequencies(msa, alphabet_dict=ALPHABET_DICT):
+    """ input: MSA (np int array object) @msa, dictionary @alphabet_dict where alphabet_dict[a] is the index of letter a
+        output: single frequencies in (L,q) np array, double frequencies in (L,L,q,q) np array """
     return compute_single_frequencies(msa, alphabet_dict=alphabet_dict), compute_double_frequencies(msa, alphabet_dict=ALPHABET_DICT)

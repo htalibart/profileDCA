@@ -18,6 +18,7 @@ def get_a3m_from_hhblits(input_file, output_file, database, maxfilt=100000, real
 
 
 def call_reformat(input_file, output_file):
+    """ reformats .a3m file in @input_file to a FASTA format in @output_file by calling reformat.pl script from HHsuite """
     call = "reformat.pl a3m fas "+str(input_file)+" "+str(output_file)+" -r"
     print(call)
     subprocess.Popen(call, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
@@ -25,15 +26,19 @@ def call_reformat(input_file, output_file):
         raise Exception("Reformat failed")
 
 def get_fasta_from_hhblits(input_file, output_file, database, maxfilt=100000, realign_max=100000, B=100000, Z=100000, n=3, e=0.001, retry_hhblits_with_memory_limit_if_fail=False, hhr_file=None):
+    """ calls HHblits and reformat """
     a3m_file = pathlib.Path("/tmp/")/(next(tempfile._get_candidate_names())+'.a3m')
     get_a3m_from_hhblits(input_file, a3m_file, database, maxfilt=maxfilt, realign_max=realign_max, B=B, Z=Z, n=n, e=e, retry_hhblits_with_memory_limit_if_fail=retry_hhblits_with_memory_limit_if_fail, hhr_file=hhr_file)
     call_reformat(a3m_file, output_file)
 
 
 def sequence_to_msa(sequence_file, database, output_msa_file):
+    """ inputs sequence in FASTA file @sequence_file, path of database @database, outputs MSA file in FASTA format @output_msa_file """
     get_fasta_from_hhblits(sequence_file, output_msa_file, database)
 
 
 def sequence_to_processed_msa(sequence_file, database, output_msa_file, seq_id_threshold=0.8, max_nb_sequences=None):
+    """ inputs sequence in FASTA file @sequence_file, path of database @database, outputs MSA file in FASTA format @output_msa_file 
+            where MSA is made non-redundant at sequence identity threshold @seq_id_threshold and only the first @max_nb_sequences are kept """
     sequence_to_msa(sequence_file, database, output_msa_file)
     msa_processing.process_msa_for_inference(output_msa_file, output_msa_file, seq_id_threshold=seq_id_threshold, max_nb_sequences=max_nb_sequences)
