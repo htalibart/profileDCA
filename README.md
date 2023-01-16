@@ -129,12 +129,12 @@ my_tests/1cc8_4ydx_ppalign_output/ now contains :
 * aligned_sequences.fasta: a fasta file with an alignment of the two original sequences derived from the alignment made by profileDCA_align. Confidently aligned positions are uppercase and other positions (those that were trimmed for the model because they had too many gaps and were aligned afterwards) are lowercase.
 
 
-You can visualize the vi parameters of the two Potts models at aligned positions using VizPotts :
+You can visualize the alignment scores using profileDCA_viz:
 ```
 profileDCA_viz -pf my_tests/my_1cc8_folder my_tests/my_4ydx_folder -aln my_tests/1cc8_4ydx_ppalign_output/aln.csv
 ```
 
-<!-- <img src="tests/examples/output_examples/1cc8_4ydx_v.png" width="500"> -->
+<img src="examples/output_examples/1cc8_4ydx.png" width="500">
 
 
 ## License
