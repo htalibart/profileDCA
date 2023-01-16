@@ -81,7 +81,7 @@ Optionally, you can also use the visualization tools to see what it looks like.
 profileDCA_viz -pf my_tests/my_1cc8_folder/
 ```
 
-<!-- <img src="examples/output_examples/1cc8_potts_model.png" width="800"> TODO --> 
+<img src="examples/output_examples/1cc8_potts_model.png" width="800">
 The first graph shows the inferred fields parameters : each column at position i is a vector vi where the higher vi(a) is, the more frequent the letter a is at position i.
 
 The second graph shows the inferred coupling parameters : each point is the Frobenius norm of the coupling matrix wij between positions i and j. The higher the norm, the more likely there is an interaction between positions i and j (and this interaction may be a contact).
