@@ -7,6 +7,22 @@ from profileDCA_build import __main__ as ppbuild_main
 from profileDCA_utils import io_management as iom
 from profileDCA_align.__main__ import *
 
+
+def get_vi_conserved_letter(conserved_letter, via=1):
+    via_conserved = via
+    vi = np.ones(20)*(-via_conserved/(20-1))
+    vi[conserved_letter] = via_conserved
+    return vi
+
+def get_fake_model(conserved_letters_list, ijabs=[], wijab=10, via=1):
+    v = np.array([get_vi_conserved_letter(c, via=via) for c in conserved_letters_list])
+    w = np.zeros((len(conserved_letters_list), len(conserved_letters_list), 20, 20))
+    for ijab in ijabs:
+        w[ijab] = wijab
+        w[ijab[1],ijab[0],ijab[2],ijab[3]] = wijab
+    return {'v':v, 'w':w}
+
+
 class Test_PPalign(unittest.TestCase):
 
     def setUp(self):
@@ -49,6 +65,21 @@ class Test_PPalign(unittest.TestCase):
         for pf in potts_folders:
             shutil.rmtree(pf)
         shutil.rmtree(output_folder)
+
+
+#    def test_solver_convergence_problem(self): # DOES NOT CONVERGE!!
+#        output_folder = pathlib.Path(tempfile.mkdtemp())
+#        gap_open=1000
+#        gap_extend=0
+#        wijab=0.25
+#        via=1
+#        mrf1 = get_fake_model([0,1,2], ijabs=[(0,2,0,0)], wijab=wijab, via=via)
+#        mrf2 = get_fake_model([0,2], ijabs=[(0,1,0,0)], wijab=wijab, via=via)
+#        insert_opens = [np.array([0]*4), np.array([0,gap_open,0])]
+#        insert_extends = [np.array([0]*4), np.array([0,gap_extend,0])]
+#        mrfs = [mrf1, mrf2]
+#        res = align_two_mrfs_with_solver(mrfs, output_folder, alpha_w=1, offset_v=0, gap_open=gap_open, gap_extend=gap_extend, insert_opens=insert_opens, insert_extends=insert_extends)
+
 
 if __name__=='__main__':
     unittest.main()
