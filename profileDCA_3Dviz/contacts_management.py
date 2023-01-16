@@ -19,6 +19,7 @@ def get_contact_scores_for_w(w):
 
 
 def get_contact_scores_with_pdb_indexes(mrf, original_sequence, pdb_chain):
+    """ returns an ordered dictionary of contact scores for positions in the PDB chain """
     mrf_pos_to_pdb_pos = pdb_utils.get_mrf_pos_to_pdb_chain_pos(mrf['mrf_pos_to_seq_pos'], original_sequence, pdb_chain)
     pm_scores = get_contact_scores_for_w(mrf['w'])
     pdb_contact_scores = OrderedDict()
@@ -27,7 +28,6 @@ def get_contact_scores_with_pdb_indexes(mrf, original_sequence, pdb_chain):
         if (c_pdb[0] is not None) and (c_pdb[1] is not None):
             pdb_contact_scores[c_pdb] = pm_scores[c]
     return pdb_contact_scores
-
 
 
 def get_colored_true_false_dicts(pdb_couplings_dict, pdb_chain, colors={True:'blue', False:'red'}, contact_threshold=8):
@@ -89,6 +89,7 @@ def get_exclus_overlaps(couplings_dict_, tops):
 
 
 def get_normalized_ordered_dict(od):
+    """ normalizes dictionary values between 0 and 1 """
     fact=1/sum(od.values())
     new_od = OrderedDict()
     for key in od:
