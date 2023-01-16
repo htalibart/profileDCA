@@ -102,6 +102,42 @@ profileDCA_3Dviz -f my_tests/my_1cc8_folder/ -i 1cc8 --chain_id A --top 25 -pse 
 pymol my_tests/my_pymol_session.pse
 ```
 
+
+
+
+### Use case : align 1CC8 and 4YDX
+
+Let's align 1CC8 with one of its homologs, 4YDX.
+
+First, build models for 1CC8 and for 4YDX as explained in the previous section:
+```
+profileDCA_build -pf my_tests/my_1cc8_folder/ -s examples/1cc8_sequence.fasta -msa examples/1cc8_original_msa.fasta
+profileDCA_build -pf my_tests/my_4ydx_folder/ -s examples/4ydx_sequence.fasta -msa examples/4ydx_original_msa.fasta
+```
+
+and align them using profileDCA_align
+```
+profileDCA_align -f1 my_tests/my_1cc8_folder -f2 my_tests/my_4ydx_folder -o my_tests/1cc8_4ydx_ppalign_output/
+```
+
+<!--my_tests/1cc8_4ydx_ppalign_output/ now contains :
+
+* aln.csv : contains the list of aligned positions in the two Potts models
+* aln_sequences.csv : contains the list of aligned positions of the original sequences
+* info.csv : contains information about the alignment made by PPalign (including similarity score and computing time)
+* aligned_training_sets.fasta (thanks to -oaln option) : a MSA made with the aligned columns of the two train MSAs
+* aligned_sequences.fasta (thanks to -osaln option) : a fasta file with an alignment of the two original sequences derived from the alignment made by PPalign. Since alignment was trimmed and not all positions are aligned by PPalign, it is not possible to have an alignment of the whole sequences. Ambiguous regions are marked with an X.
+
+
+You can visualize the vi parameters of the two Potts models at aligned positions using VizPotts :
+```
+vizpotts -f examples/1cc8_potts_folder examples/4ydx_potts_folder -aln 1cc8_4ydx_ppalign_output/aln.csv
+```
+
+<img src="tests/examples/output_examples/1cc8_4ydx_v.png" width="500">
+-->
+
+
 ## License
 
 This software is released under the terms of the GNU Affero General Public License v3.0 (GNU AGPLv3).
