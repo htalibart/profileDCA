@@ -60,10 +60,15 @@ pip3 install .
 ### Use case : build a Potts model for 1CC8 (and visualize it)
 Let's build a Potts model for [1CC8](https://www.rcsb.org/structure/1cc8) based on an alignment of its close homologs.
 
+First, create a directory for tests:
+```
+mkdir my_tests/
+```
+
 We provided sequence and MSA in examples/. We call profileDCA_build and specify where to find the sequence (in fasta format) and the alignment (in fasta or a3m format).
 
 ```
-profileDCA_build -pf my_1cc8_folder/ -s examples/1cc8_sequence.fasta -msa examples/1cc8_original_msa.fasta
+profileDCA_build -pf my_tests/my_1cc8_folder/ -s examples/1cc8_sequence.fasta -msa examples/1cc8_original_msa.fasta
 ```
 
 This command creates a folder named my_1cc8_folder/ which contains parameters of the model inferred from the MSA after having processed it (i.e. filtered to 80% sequence identity and reduced the number of sequences). The folder also contains information on the mappings between positions of the training MSA and the original MSA.
@@ -73,7 +78,7 @@ You can use it as a profileDCA_align input to align it to another model.
 Optionally, you can also use the visualization tools to see what it looks like.
 
 ```
-profileDCA_viz -pf my_1cc8_folder/
+profileDCA_viz -pf my_tests/my_1cc8_folder/
 ```
 
 <!-- <img src="examples/output_examples/1cc8_potts_model.png" width="800"> TODO --> 
@@ -86,15 +91,15 @@ The third graph shows the Euclidean norms of the vectors vi. A higher norm sugge
 
 You can also, for example, visualize one specific coupling parameter
 ```
-profileDCA_viz -pf my_1cc8_folder/ -i 18 -j 22
+profileDCA_viz -pf my_tests/my_1cc8_folder/ -i 18 -j 22
 ```
 
 <!-- <img src="examples/output_examples/1cc8_w_18_22.png" width="500"> TODO -->
 
 You can visualize the top 25 predicted contacts on a 3D structure using profileDCA_3Dviz, which creates a .pse that you can open with PyMOL
 ```
-profileDCA_3Dviz -f my_1cc8_folder/ -i 1cc8 --chain_id A --top 25 -pse my_pymol_session.pse
-pymol my_pymol_session.pse
+profileDCA_3Dviz -f my_tests/my_1cc8_folder/ -i 1cc8 --chain_id A --top 25 -pse my_tests/my_pymol_session.pse
+pymol my_tests/my_pymol_session.pse
 ```
 <!-- <img src="tests/examples/output_examples/1cc8_pymol.png" width="500"> TODO -->
 
