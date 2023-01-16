@@ -18,10 +18,13 @@ def get_int_msa_array(msa_file, alphabet_dict=ALPHABET_DICT):
     return int_array
 
 def mrf_to_files(mrf, output_folder):
+    """ saves MRF dictionary @mrf values in numpy file format in output folder @output_folder
+        files will be named @output_folder/v.npy, @output_folder/w.npy etc. """
     for key in mrf:
         np.save(str(output_folder/key), mrf[key])
 
 def mrf_from_folder(potts_folder):
+    """ reads numpy arrays stored in @potts_folder in MRF dictionary """
     mrf = {}
     for key in ['v','w','v_full', 'mrf_pos_to_seq_pos']:
         npy_file = potts_folder/(key+'.npy')
@@ -32,30 +35,37 @@ def mrf_from_folder(potts_folder):
     return mrf
 
 def get_first_sequence_in_fasta_file(seq_file):
+    """ outputs first sequence in fasta file @seq_file as a String """
     return str(list(SeqIO.parse(str(seq_file), "fasta"))[0].seq)
 
 def get_first_sequence_name(seq_file):
+    """ outputs name of first sequence in fasta file @seq_file """
     return str(list(SeqIO.parse(str(seq_file), "fasta"))[0].id)
 
 def get_first_record_sequence_and_name(seq_file):
+    """ outputs name and String sequence of first sequence in fasta file @seq_file """
     first_record = list(SeqIO.parse(str(seq_file), "fasta"))[0]
     return str(first_record.seq), str(first_record.id)
 
 
 def copy_file(origin, destination):
+    """ properly copies a file (pathlib object) from @origin to @destination using shutil """
     if origin!=destination:
         shutil.copy(str(origin), str(destination))
 
 def write_readme(folder, **kwargs):
+    """ writes all arguments in a README.txt file which will be stored in directory @folder """
     p = folder/'README.txt'
     with p.open(mode='w') as f:
         json.dump(kwargs, f, default=str)
 
 def get_parameters_from_readme_file(readme_file):
+    """ reads arguments from json readme file @readme_file written by function write_readme """
     params = json.load(open(str(readme_file)))
     return params
 
 def dict_to_csv(d, input_csv_file):
+    """ inputs a dictionary {key: value, ...} and stores it in a 2-lines csv file where first line is keys and second line is values """
     with open(str(input_csv_file), 'w') as csv_file:
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(list(d.keys()))
@@ -71,6 +81,7 @@ def write_positions_to_csv(positions_list, output_file):
             csvwriter.writerow(row)
 
 def get_infos_solver_dict_from_ppalign_output_file(infos_res_file):
+    """ reads a dictionary {key: value, ...} from a 2-lines csv file @infos_res_file where first line is keys and second line is values """
     df = pd.read_csv(infos_res_file)
     return df.loc[0].to_dict()
 
@@ -114,6 +125,7 @@ def get_aligned_positions_with_gaps_from_ppalign_output_file(aln_with_gaps_res_f
     return [aln_with_gaps_dict['pos_ref'], aln_with_gaps_dict['pos_2']]
 
 def create_folder(folder_path):
+    """ properly create folder at @folder_path with pathlib library, raises exception if folder already exists """
     if not folder_path.is_dir():
         folder_path.mkdir()
     else:

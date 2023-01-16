@@ -4,6 +4,9 @@ from Bio.Seq import Seq
 
 
 def get_aligned_sequence_positions_with_gaps(aligned_mrf_positions_with_gaps, mrf_pos_to_seq_pos_list):
+    """ inputs the aligned model positions with gap symbols @aligned_mrf_positions_with_gaps
+            and the list of mappings from model position to sequence position @mrf_pos_to_seq_pos_list where mrf_pos_to_seq_pos_list[i][j] is the position in the i^th aligned sequence (first or second) corresponding to the i^th aligned model
+        outputs the aligned sequence positions with gap symbols """
     aligned_sequence_positions_with_gaps = [[],[]]
     aln_length = len(aligned_mrf_positions_with_gaps[0])
     seq_pos_previously_aligned = [-1,-1]
@@ -36,6 +39,8 @@ def get_aligned_sequence_positions_with_gaps(aligned_mrf_positions_with_gaps, mr
 
 
 def aligned_positions_with_gaps_to_aligned_sequences(aligned_positions_with_gaps, sequences):
+    """ inputs a list of positions with gap symbols @aligned_positions_with_gaps and a list of sequences as strings @sequences
+        outputs a list of the characters in the sequences at aligned positions, with gap symbols """
     aligned_sequences = ["",""]
     for seq_index in range(2):
         for pos_in_seq in aligned_positions_with_gaps[seq_index]:
@@ -47,6 +52,8 @@ def aligned_positions_with_gaps_to_aligned_sequences(aligned_positions_with_gaps
 
 
 def aligned_positions_with_gaps_to_aligned_sequences_with_lowercase(all_aligned_positions_with_gaps, confident_aligned_positions, sequences):
+    """ inputs a list of aligned positions with gap symbols @all_aligned_positions_with_gaps, a list of confidently aligned positions @confident_aligned_positions and a list of sequences as strings @sequences
+        outputs a list of the characters in the sequences at aligned positions, with gap symbols, where letters are upper if positions are in @confident_aligned_positions """
     aligned_sequences = ["",""]
     for seq_index in range(2):
         index_in_confident=0
@@ -82,12 +89,21 @@ def translate_aligned_positions_without_gaps(aligned_positions_without_gaps_1, l
 
 
 def write_aligned_sequences_in_fasta_file(aligned_sequence_positions_with_gaps, sequences, names, output_fasta_file):
+    """ inputs a list of aligned sequence positions with gap symbols @aligned_sequence_positions_with_gaps,
+            a list of the corresponding String sequences @sequences,
+            a list of the corresponding sequence names @names,
+        and outputs the aligned sequences in the fasta file provided by @output_fasta_file """
     seqs_aligned = aligned_positions_with_gaps_to_aligned_sequences(aligned_sequence_positions_with_gaps, sequences)
     seq_records = [SeqRecord(Seq(s), id=name, description='') for s,name in zip(seqs_aligned, names)]
     with open(str(output_fasta_file), 'w') as f:
         SeqIO.write(seq_records, f, "fasta")
 
 def write_aligned_sequences_in_fasta_file_with_lowercase(aligned_sequence_positions_with_gaps, confident_aligned_sequence_positions, sequences, names, output_fasta_file):
+    """ inputs a list of all aligned sequence positions with gap symbols @aligned_sequence_positions_with_gaps,
+            a list of, among all aligned sequence positions, those that were confidently aligned @confident_aligned_sequence_positions,
+            a list of the corresponding String sequences @sequences,
+            a list of the corresponding sequence names @names,
+        and outputs the aligned sequences in the fasta file provided by @output_fasta_file where confidently aligned positions are represented with uppercase letters and others with lowercase"""
     seqs_aligned = aligned_positions_with_gaps_to_aligned_sequences_with_lowercase(aligned_sequence_positions_with_gaps, confident_aligned_sequence_positions, sequences)
     seq_records = [SeqRecord(Seq(s), id=name, description='') for s,name in zip(seqs_aligned, names)]
     with open(str(output_fasta_file), 'w') as f:
