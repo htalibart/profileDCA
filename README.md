@@ -94,14 +94,13 @@ You can also, for example, visualize one specific coupling parameter
 profileDCA_viz -pf my_tests/my_1cc8_folder/ -i 18 -j 22
 ```
 
-<!-- <img src="examples/output_examples/1cc8_w_18_22.png" width="500"> TODO -->
+<img src="examples/output_examples/1cc8_w_18_22.png" width="500">
 
 You can visualize the top 25 predicted contacts on a 3D structure using profileDCA_3Dviz, which creates a .pse that you can open with PyMOL
 ```
 profileDCA_3Dviz -f my_tests/my_1cc8_folder/ -i 1cc8 --chain_id A --top 25 -pse my_tests/my_pymol_session.pse
 pymol my_tests/my_pymol_session.pse
 ```
-<!-- <img src="tests/examples/output_examples/1cc8_pymol.png" width="500"> TODO -->
 
 ## License
 
