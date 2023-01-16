@@ -14,12 +14,30 @@ PPALIGN_SOLVER = ctypes.CDLL(PPALIGN_CPP_LIBRARY)
 INFINITY = 1000000000
 
 def get_edges_map(w): #TODO w percent
+    """ inputs array of couplings @w of size LxLxqxq
+        outputs an "edge map" @edges_map of size LxL where edges_map[i,j] is 1 if ||wij||>0 and 0 otherwise
+        This is required by APURVA
+    """
     edges_map = 1*(ppfunctions.compute_w_norms(w)>0)
     for i in range(w.shape[0]):
         edges_map[i,i] = 0
     return edges_map
 
 def align_two_mrfs_with_solver(mrfs, output_folder, n_limit_param=INFINITY, iter_limit_param=1000, t_limit=36000, disp_level=1, epsilon_sim=0.001, use_w=True, use_v=True, gamma=1.0, theta=0.9, stepsize_min=0.000000005, nb_non_increasing_steps_max=500, alpha_w=1, sim_min=-100, offset_v=0, gap_open=8, gap_extend=0, insert_opens=None, insert_extends=None, costly_end_gap_left=False, costly_end_gap_right=False, remove_negative_couplings=False, **kwargs):
+    """ This function calls the C++ APURVA solver to align models in list @mrfs where mrfs[i] is the dictionary representing MRF i '{'v': array of fields, 'w': array of couplings, etc.}
+        Outputs will be written in directory @output_folder
+        Some parameters are APURVA solver parameters that you probably shouldn't be playing with: @n_limit_param, @iter_limit_param, @disp_level, @gamma, @theta, @stepsize_min, @nb_non_increasing_steps
+        @t_limit is the time out in seconds
+        @epsilon_sim is the precision, computation stops when 2*(UB-LB)/(s(A,A)+s(B,b)) < epsilon_sim
+        @use_w: use coupling parameters in alignment computation? (otherwise set to 0)
+        @use_v: use field parameters in alignment computation? (otherwise set to 0)
+        @alpha_w: coefficient to balance between v and w
+        @sim_min: when similarity is lower than @sim_min, computation stops and program says that models are not similar
+        @offset_v, @gap_open and @gap_extend are resp. offset, gap open and gap extend hyperparameters
+        @insert_opens and @insert_extends are arrays of position-specific insertion penalties parameters for each model
+        @costly_end_gap_left (resp. @costly_end_gap_right) should be True if you want gaps at the beginning (resp. end) of the sequence to be costly
+        @remove_negative_couplings sets all negative couplings to 0
+    """
     mrf_lengths = [mrf['v'].shape[0] for mrf in mrfs]
     if not all([mrf_length>0 for mrf_length in mrf_lengths]):
         if not any(mrf_lengths):
@@ -164,6 +182,7 @@ def align_two_mrfs_with_solver(mrfs, output_folder, n_limit_param=INFINITY, iter
 
 
 def align_missing_positions(aligned_sequence_positions, mrfs, pc_tau=0.5, alphabet=global_variables.ALPHABET, no_free_end_gaps=False, **kwargs):
+    """ inputs positions already aligned by solver @aligned_sequence_positions for the two models in dictionary list @mrfs and returns an alignment of all positions where "missing" positions are aligned using fields only """
     kwargs['use_w']=False
     previously_aligned = [-1,-1]
     whole_alignment = [[],[]]
@@ -211,6 +230,7 @@ def align_missing_positions(aligned_sequence_positions, mrfs, pc_tau=0.5, alphab
 
 
 def align_two_mrfs_full(mrfs, output_folder, gap_open=8, no_free_end_gaps=False, **kwargs):
+    """ aligns models in dictionary list @mrfs, outputs in directory @output_folder """
     # total PPalign time starts now
     time_start = time.time()
       

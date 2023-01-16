@@ -60,7 +60,7 @@ def get_v_scores_for_alignment(aligned_potts_models, aligned_pos, offset_v=0, **
 
 
 def get_w_scores_for_alignment_given_w(w_list, aligned_pos):
-    """ @w_scores[i,j] is the score for the alignment of couplings from the two @aligned_potts_models that are aligned at position i and j in the PPalign alignment given by @aligned_positions_dict """
+    """ @w_scores[i,j] is the score for the alignment of couplings given in @w_list that are aligned at position i and j in the PPalign alignment given by @aligned_positions_dict """
     L = len(aligned_pos[0])
     w_scores = np.zeros((L,L))
     for ind_i in range(L-1):
@@ -71,10 +71,12 @@ def get_w_scores_for_alignment_given_w(w_list, aligned_pos):
 
 
 def get_w_scores_for_alignment(aligned_potts_models, aligned_pos):
+    """ @w_scores[i,j] is the score for the alignment of couplings from the two @aligned_potts_models that are aligned at position i and j in the PPalign alignment given by @aligned_positions_dict """
     return get_w_scores_for_alignment_given_w([mrf['w'] for mrf in aligned_potts_models], aligned_pos)
 
 
 def get_offset_for_uniform_pc_rate(uniform_pc_rate):
+    """ computes offset parameter given the uniform pseudo-count rate used @uniform_pc_rate so that the offset is the score of aligning a background amino acid frequency column to itself """
     bg_fi = np.array(global_variables.AA_BACKGROUND_FREQUENCIES).reshape((1,20))
     bg_fi_pc = pseudocounts.apply_uniform_pseudocounts_to_single_frequencies(bg_fi, uniform_pc_rate)
     bg_vi_pc = mrf_inference.single_frequencies_to_fields(bg_fi_pc)[0]

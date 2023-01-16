@@ -6,6 +6,11 @@ from profileDCA_align.potts_model_alignment import *
 from profileDCA_align import compute_scores
 
 def align_objects_and_handle_files(mrfs, output_folder, sequence_files, **kwargs):
+    """ inputs two MRFs in dictionary list @mrfs where mrfs[i] is a dictionary {'v': array of fields, 'w': array of couplings, etc.}
+        and the corresponding FASTA files of the two sequences to be aligned @sequence_files
+        and all other possible PPalign arguments
+        outputs alignment results as dictionary and writes everything in files in @output_folder """
+
     # write readme with all input arguments used
     iom.write_readme(output_folder, **kwargs)
 
