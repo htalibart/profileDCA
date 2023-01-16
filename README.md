@@ -17,6 +17,7 @@ profileDCA suite was developped with Python3.9 and requires the following packag
 * biopython (1.79)
 * matplotlib (2.0.0)
 * seaborn (0.9.0)
+* scipy (1.2.1)
 
 and, to build models from sequences, you will need HHsuite which you have to install and add to your path:
 

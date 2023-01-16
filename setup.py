@@ -7,7 +7,7 @@ setup(
     name='profileDCA',
     version='1.0',
     packages=find_packages(),
-    install_requires=['numpy', 'matplotlib', 'biopython>=1.78', 'pandas', 'seaborn'],  
+    install_requires=['numpy', 'matplotlib', 'biopython>=1.78', 'pandas', 'seaborn', 'scipy'],  
     package_data={
         'profileDCA_align':['ppalign_solver.so'],
     },
